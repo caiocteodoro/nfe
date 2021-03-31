@@ -58,7 +58,7 @@ class WSCancelamento implements DFLog {
             throw new IllegalArgumentException("Nao foi possivel encontrar URL para RecepcaoEvento " + parser.getModelo().name() + ", autorizador " + autorizador.name());
         }
         
-        final NfeResultMsg nfeRecepcaoEvento = new NFeRecepcaoEvento4Stub(urlWebService).nfeRecepcaoEvento(dados);
+        final NfeResultMsg nfeRecepcaoEvento = new NFeRecepcaoEvento4Stub(urlWebService, config).nfeRecepcaoEvento(dados);
         final OMElement omElementResult = nfeRecepcaoEvento.getExtraElement();
         this.getLogger().debug(omElementResult.toString());
         return omElementResult;
@@ -76,8 +76,8 @@ class WSCancelamento implements DFLog {
         final NFInfoEventoCancelamento infoEvento = new NFInfoEventoCancelamento();
         infoEvento.setAmbiente(this.config.getAmbiente());
         infoEvento.setChave(chaveAcesso);
-        if (Integer.parseInt(chaveParser.getSerie()) >= 920 && Integer.parseInt(chaveParser.getSerie()) <= 969) {//destinado a emissão de pessoa física com IE
-            infoEvento.setCpf(chaveParser.getCnpjEmitente().substring(3));
+        if (Integer.parseInt(chaveParser.getSerie()) >= 920 && Integer.parseInt(chaveParser.getSerie()) <= 969 && chaveParser.isEmitentePessoaFisica()) {//destinado a emissão de pessoa física com IE
+            infoEvento.setCpf(chaveParser.getCpfEmitente());
         } else {
             infoEvento.setCnpj(chaveParser.getCnpjEmitente());
         }
